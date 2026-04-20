@@ -1,0 +1,11 @@
+build:
+  version: "2.0"
+
+loans:
+  message: "Welcome to ABBank loans QA APIs"
+  contactDetails:
+    name: "Kaiser Jaeri - QA Lead"
+    email: "kaiserjaeri@email.com"
+  onCallSupport:
+    - (440) 429 8321
+    - (440) 438 4720

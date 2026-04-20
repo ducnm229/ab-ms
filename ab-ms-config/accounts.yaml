@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+accounts:
+  message: "Welcome to ABBank accounts local APIs"
+  contactDetails:
+    name: "Aidan Adrian"
+    email: "aidanadrian@email.com"
+  onCallSupport:
+    - (270) 320 8732
+    - (270) 452 1358

@@ -1,0 +1,9 @@
+server:
+  port: 8072
+
+eureka:
+  instance:
+    preferIpAddress: true # registering with IP instead of domain name
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
