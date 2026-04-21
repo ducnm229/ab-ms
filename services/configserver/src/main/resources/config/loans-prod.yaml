@@ -1,0 +1,11 @@
+build:
+  version: "1.0"
+
+loans:
+  message: "Welcome to ABBank loans prod APIs"
+  contactDetails:
+    name: "Takeda Shingen - Product Owner"
+    email: "takedashingen@email.com"
+  onCallSupport:
+    - (633) 252 3232
+    - (633) 752 5128

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment # predefined object in K8s, for deploying service
+metadata:
+  name: configserver-deployment
+  labels:
+    app: configserver # service discovers pods via labels
+spec:
+  replicas: 1 # one pod per replica
+  selector:
+    matchLabels: # matches instructions to label
+      app: configserver
+  template:
+    metadata:
+      labels:
+        app: configserver
+    spec:
+      containers:
+      - name: configserver # one container per pod
+        image: ducnm229/configserver:v1.0
+        ports:
+        - containerPort: 8071 # pod listens on this port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configserver
+spec:
+  selector:
+    app: configserver # must match label in Deployment metadata
+  type: LoadBalancer # exposes service outside cluster
+  ports:
+    - protocol: TCP # web-based communication
+      port: 8071 # exposes this port outside cluster
+      targetPort: 8071

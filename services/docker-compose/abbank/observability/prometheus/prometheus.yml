@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 5s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 5s
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'abbank-mntr'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'customer'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['customer:8080']
+  - job_name: 'cards'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'cards:9000' ]
+  - job_name: 'loans'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'loans:8090' ]
+  - job_name: 'gatewayserver'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'gatewayserver:8072' ]
+  - job_name: 'eurekaserver'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'eurekaserver:8070' ]
+  - job_name: 'configserver'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'configserver:8071' ]

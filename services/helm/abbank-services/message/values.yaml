@@ -1,0 +1,19 @@
+deploymentName: message-deployment
+serviceName: message
+appLabel: message
+replicaCount: 1
+
+image:
+  repository: ducnm229/message
+  tag: v1.0
+
+containerPort: 9010
+service:
+  type: ClusterIP
+  port: 9010
+  targetPort: 9010
+
+appname_enabled: true
+appName: message
+
+kafka_enabled: true

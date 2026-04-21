@@ -1,0 +1,22 @@
+deploymentName: loans-deployment
+serviceName: loans
+appLabel: loans
+replicaCount: 1
+
+image:
+  repository: ducnm229/loans
+  tag: v1.0
+
+containerPort: 8090
+service:
+  type: ClusterIP
+  port: 8090
+  targetPort: 8090
+
+appname_enabled: true
+appName: loans
+
+profile_enabled: true
+config_enabled: true
+discovery_enabled: true
+otel_enabled: true

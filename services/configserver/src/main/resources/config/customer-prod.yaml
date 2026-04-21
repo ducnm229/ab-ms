@@ -1,0 +1,11 @@
+build:
+  version: "1.0"
+
+customer:
+  message: "Welcome to ABMS customer prod APIs"
+  contactDetails:
+    name: "Takeda Shingen - Product Owner"
+    email: "{cipher}1316f9d161d63290f18b45d668a5efc05e563519181e8c26a58d3e916fd408f2008ea90da397049aa417172000247b37"
+  onCallSupport:
+    - (633) 252 3232
+    - (633) 752 5128

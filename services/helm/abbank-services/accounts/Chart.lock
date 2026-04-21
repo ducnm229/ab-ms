@@ -1,0 +1,6 @@
+dependencies:
+- name: abbank-common
+  repository: file://../../abbank-common
+  version: 0.1.0
+digest: sha256:25583f6db326577015d8288b0aa9e164ef69c479737958543e79efc02c7bdcd9
+generated: "2026-02-28T16:55:34.3949371+07:00"

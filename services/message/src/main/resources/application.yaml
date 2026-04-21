@@ -1,0 +1,21 @@
+server:
+  port: 9010
+
+spring:
+  application:
+    name: message
+  cloud:
+    function:
+      definition: sendEmail|sendSms
+    stream:
+      bindings:
+        sendEmailsendSms-in-0: # input binding, function: sendEmailsendSms, index: 0
+          destination: send-communication
+          group: message-ms
+        sendEmailsendSms-out-0: # output binding, function: sendEmailsendSms, index: 0
+          destination: communication-sent
+      kafka:
+        binder:
+          brokers:
+            - localhost:19092
+

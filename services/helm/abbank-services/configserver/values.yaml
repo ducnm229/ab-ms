@@ -1,0 +1,19 @@
+deploymentName: configserver-deployment
+serviceName: configserver
+appLabel: configserver
+replicaCount: 1
+
+image:
+  repository: ducnm229/configserver
+  tag: v1.0
+
+containerPort: 8071
+service:
+  type: ClusterIP
+  port: 8071
+  targetPort: 8071
+
+appname_enabled: true
+appName: configserver
+
+otel_enabled: true

@@ -1,0 +1,23 @@
+deploymentName: accounts-deployment
+serviceName: accounts
+appLabel: accounts
+replicaCount: 2
+
+image:
+  repository: ducnm229/accounts
+  tag: v1.0
+
+containerPort: 8080
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+appname_enabled: true
+appName: accounts
+
+profile_enabled: true
+config_enabled: true
+discovery_enabled: true
+otel_enabled: true
+kafka_enabled: true

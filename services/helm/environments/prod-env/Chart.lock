@@ -1,0 +1,24 @@
+dependencies:
+- name: abbank-common
+  repository: file://../../abbank-common
+  version: 0.1.0
+- name: configserver
+  repository: file://../../abbank-services/configserver
+  version: 0.1.0
+- name: accounts
+  repository: file://../../abbank-services/accounts
+  version: 0.1.0
+- name: cards
+  repository: file://../../abbank-services/cards
+  version: 0.1.0
+- name: loans
+  repository: file://../../abbank-services/loans
+  version: 0.1.0
+- name: gatewayserver
+  repository: file://../../abbank-services/gatewayserver
+  version: 0.1.0
+- name: message
+  repository: file://../../abbank-services/message
+  version: 0.1.0
+digest: sha256:75c9d481fbda092f5d933b94cbf8e31b00f718a391d43fde416d88571cee8f26
+generated: "2026-03-15T12:11:38.2292087+07:00"

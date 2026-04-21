@@ -1,0 +1,90 @@
+server:
+  port: 9080
+spring:
+  application:
+    name: inventory
+  profiles:
+    active: prod
+  datasource:
+    url: jdbc:h2:mem:inventory_db
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  cloud:
+    function:
+      definition: reserveInventoryCommands;releaseInventoryCommands
+    stream:
+      default:
+        contentType: application/json
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:19092}
+      bindings:
+        reserveInventoryCommands-in-0:
+          destination: inventory.commands.reserve
+          group: inventory-service
+        releaseInventoryCommands-in-0:
+          destination: inventory.commands.release
+          group: inventory-service
+        inventorySagaEvents-out-0:
+          destination: order.saga.events
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+eureka:
+  instance:
+    preferIpAddress: true # registering with IP instead of domain name
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: inventory
+    description: "ABMS Inventory Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      ab:
+        ms:
+          inventory: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

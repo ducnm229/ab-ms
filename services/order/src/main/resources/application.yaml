@@ -1,0 +1,141 @@
+server:
+  port: 9070
+clients:
+  customer-service:
+    url: ${CLIENTS_CUSTOMER_SERVICE_URL:http://localhost:9060}
+spring:
+  application:
+    name: order
+  profiles:
+    active: prod
+  datasource:
+    url: jdbc:h2:mem:order_db
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          customer-service:
+            connectTimeout: 200
+            readTimeout: 1000
+      circuitbreaker:
+        enabled: false
+    function:
+      definition: orderSagaEvents
+    stream:
+      default:
+        contentType: application/json
+      kafka:
+        binder:
+          brokers:
+            - ${KAFKA_BROKERS:localhost:19092}
+      bindings:
+        # --- Inbound (consumer function name + -in-0) ---
+        orderSagaEvents-in-0:
+          destination: order.saga.events
+          group: order-service
+        # --- Outbound (StreamBridge binding names from OrderCommandPublisher) ---
+        reserveInventory-out-0:
+          destination: inventory.commands.reserve
+        releaseInventory-out-0:
+          destination: inventory.commands.release
+        processPayment-out-0:
+          destination: payment.commands.process
+        confirmOrder-out-0:
+          destination: order.commands.confirm
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+eureka:
+  instance:
+    preferIpAddress: true # registering with IP instead of domain name
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: order
+    description: "ABMS Order Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      ab:
+        ms:
+          order: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+resilience4j:
+  circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+      customer-service:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        ignoreExceptions:
+          - com.ab.ms.order.exceptions.InvalidCustomerException
+          - com.ab.ms.order.exceptions.UnknownProductException
+          - com.ab.ms.order.exceptions.ResourceNotFoundException
+          - com.ab.ms.order.exceptions.NonRetryableSagaException
+  retry:
+    retryAspectOrder: 2
+    instances:
+      customer-service-retry:
+        maxAttempts: 3
+        waitDuration: 200
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - feign.FeignException
+          - feign.RetryableException
+          - java.io.IOException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+        ignoreExceptions:
+          - com.ab.ms.order.exceptions.InvalidCustomerException
+          - com.ab.ms.order.exceptions.UnknownProductException
+          - com.ab.ms.order.exceptions.ResourceNotFoundException
+          - com.ab.ms.order.exceptions.NonRetryableSagaException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException

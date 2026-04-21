@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.5.3"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+container:
+  port: 8080
+  
+admin:
+  username: user
+  password: password
+
+# Keycloak command arguments
+# Use "start-dev" for development mode
+command: "start-dev"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
