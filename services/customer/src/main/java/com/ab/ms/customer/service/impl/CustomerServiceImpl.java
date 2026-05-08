@@ -1,7 +1,6 @@
 package com.ab.ms.customer.service.impl;
 
-import com.ab.ms.customer.dto.ContactInfoUpdateDto;
-import com.ab.ms.customer.dto.CustomerRegisteredEventDto;
+import com.ab.ms.customer.dto.*;
 import com.ab.ms.customer.exceptions.DuplicateEmailException;
 import com.ab.ms.customer.exceptions.DuplicateMobileNumberException;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import com.ab.ms.customer.dto.CustomerDto;
 import com.ab.ms.customer.entity.Customer;
 import com.ab.ms.customer.exceptions.CustomerAlreadyExistsException;
 import com.ab.ms.customer.exceptions.ResourceNotFoundException;
@@ -21,6 +19,7 @@ import com.ab.ms.customer.repository.CustomerRepository;
 import com.ab.ms.customer.service.ICustomerService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +33,7 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     @Transactional
-    public CustomerDto registerCustomer(CustomerDto customerDto) {
+    public CustomerResponse registerCustomer(CreateCustomerRequest customerDto) {
         if (customerRepository.existsByMobileNumber(customerDto.getMobileNumber())) {
             throw new CustomerAlreadyExistsException(
                     "Customer already exists with mobile number: " + customerDto.getMobileNumber());
@@ -45,14 +44,12 @@ public class CustomerServiceImpl implements ICustomerService {
                     "Customer already exists with email: " + customerDto.getEmail());
         }
 
-        customerDto.setActive(true);
-
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
         Customer saved = customerRepository.save(customer);
 
         sendCommunication(saved);
 
-        return CustomerMapper.mapToCustomerDto(saved, new CustomerDto());
+        return CustomerMapper.mapToCustomerResponseDto(saved, new CustomerResponse());
     }
 
     private void sendCommunication(Customer customer) {
@@ -73,32 +70,32 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public CustomerDto getCustomerById(@NonNull Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId.toString()));
-
-        return CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+    public CustomerResponse getCustomerById(@NonNull Long customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "id", customerId.toString())
+        );
+        return CustomerMapper.mapToCustomerResponseDto(customer, new CustomerResponse());
     }
 
     @Override
-    public CustomerDto getCustomerByMobileNumber(String mobileNumber) {
-        Customer customer = customerRepository.findByMobileNumber(mobileNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "mobile number", mobileNumber));
-
-        return CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+    public CustomerResponse getCustomerByMobileNumber(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+        return CustomerMapper.mapToCustomerResponseDto(customer, new CustomerResponse());
     }
 
     @Override
-    public List<CustomerDto> getAllCustomers() {
+    public List<CustomerResponse> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
-                .map(customer -> CustomerMapper.mapToCustomerDto(customer, new CustomerDto()))
+                .map(customer -> CustomerMapper.mapToCustomerResponseDto(customer, new CustomerResponse()))
                 .toList();
     }
 
     @Override
     @Transactional
-    public CustomerDto updateContactInfo(@NonNull Long customerId, ContactInfoUpdateDto contactInfoUpdateDto) {
+    public CustomerResponse updateContactInfo(@NonNull Long customerId, ContactInfoUpdateDto contactInfoUpdateDto) {
 
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId.toString()));
@@ -119,17 +116,24 @@ public class CustomerServiceImpl implements ICustomerService {
             customer.setMobileNumber(contactInfoUpdateDto.getMobileNumber());
         }
 
-        return CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        return CustomerMapper.mapToCustomerResponseDto(customer, new CustomerResponse());
     }
 
     @Override
     @Transactional
-    public CustomerDto deactivateCustomer(@NonNull Long customerId) {
+    public void deactivateCustomer(@NonNull Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId.toString()));
 
         customer.setActive(false);
+    }
 
-        return CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+    @Override
+    public CustomerStatusDto getCustomerStatus(Long customerId) {
+        Optional<Customer> optional = customerRepository.findById(customerId);
+        return optional.map(
+                customer -> new CustomerStatusDto(
+                        true, customer.isActive()
+                )).orElseGet(() -> new CustomerStatusDto(false, false));
     }
 }

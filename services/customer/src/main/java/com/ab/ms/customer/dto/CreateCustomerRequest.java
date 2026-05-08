@@ -12,7 +12,7 @@ import lombok.Data;
     description = "Schema to hold customer registration request data"
 )
 @Data
-public class CustomerRegistrationRequestDto {
+public class CreateCustomerRequest {
     @Schema(
         description = "Customer name", example = "Alan Baker"
     )

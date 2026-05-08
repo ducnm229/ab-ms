@@ -45,6 +45,8 @@ spring:
       bindings:
         # --- Inbound (consumer function name + -in-0) ---
         orderSagaEvents-in-0:
+          consumer:
+            max-attempts: 1 # disables Spring Cloud Stream retry
           destination: order.saga.events
           group: order-service
         # --- Outbound (StreamBridge binding names from OrderCommandPublisher) ---

@@ -30,7 +30,7 @@ public class KafkaListenerContainerConfig {
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(
                 // Called after retries are exhausted
                 (record, ex) -> log.warn(
-                        "Kafka listener giving up after retries; topic={}, partition={}, offset={}: {}",
+                        "Kafka consumer abandoning failed record... topic={}, partition={}, offset={}: {}",
                         record.topic(),
                         record.partition(),
                         record.offset(),

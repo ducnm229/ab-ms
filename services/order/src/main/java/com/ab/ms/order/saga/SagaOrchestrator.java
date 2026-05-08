@@ -42,7 +42,7 @@ public class SagaOrchestrator {
         if (!order.getId().equals(event.orderId())) {
             throw new MismatchedOrderIdSagaException(event.orderId(), order.getId());
         }
-        log.info("processing order status transitioning for order ID: {}", event.orderId());
+        log.info("Processing order status transitioning for order ID: {}", event.orderId());
         applyTransition(order, SagaTransitions.resolve(order, event));
         return order;
     }

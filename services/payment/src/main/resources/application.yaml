@@ -33,6 +33,8 @@ spring:
           brokers: ${KAFKA_BROKERS:localhost:19092}
       bindings:
         processPaymentCommands-in-0:
+          consumer:
+            max-attempts: 1 # disables Spring Cloud Stream retry
           destination: payment.commands.process
           group: payment-service
         paymentSagaEvents-out-0:

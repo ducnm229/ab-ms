@@ -33,9 +33,13 @@ spring:
           brokers: ${KAFKA_BROKERS:localhost:19092}
       bindings:
         reserveInventoryCommands-in-0:
+          consumer:
+            max-attempts: 1 # disables Spring Cloud Stream retry
           destination: inventory.commands.reserve
           group: inventory-service
         releaseInventoryCommands-in-0:
+          consumer:
+            max-attempts: 1 # disables Spring Cloud Stream retry
           destination: inventory.commands.release
           group: inventory-service
         inventorySagaEvents-out-0:

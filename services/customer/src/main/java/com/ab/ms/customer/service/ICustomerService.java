@@ -2,21 +2,26 @@ package com.ab.ms.customer.service;
 
 import java.util.List;
 
+import com.ab.ms.customer.dto.CustomerResponse;
+import com.ab.ms.customer.dto.CustomerStatusDto;
+import com.ab.ms.customer.entity.Customer;
 import org.springframework.lang.NonNull;
 
 import com.ab.ms.customer.dto.ContactInfoUpdateDto;
-import com.ab.ms.customer.dto.CustomerDto;
+import com.ab.ms.customer.dto.CreateCustomerRequest;
 
 public interface ICustomerService {
-    CustomerDto registerCustomer(CustomerDto customerDto);
+    CustomerResponse registerCustomer(CreateCustomerRequest customerDto);
 
-    CustomerDto getCustomerById(@NonNull Long customerId);
+    CustomerResponse getCustomerById(@NonNull Long customerId);
 
-    CustomerDto getCustomerByMobileNumber(String mobileNumber);
+    CustomerResponse getCustomerByMobileNumber(String mobileNumber);
 
-    List<CustomerDto> getAllCustomers();
+    List<CustomerResponse> getAllCustomers();
 
-    CustomerDto updateContactInfo(@NonNull Long customerId, ContactInfoUpdateDto contactInfoUpdateDto);
+    CustomerResponse updateContactInfo(@NonNull Long customerId, ContactInfoUpdateDto contactInfoUpdateDto);
 
-    CustomerDto deactivateCustomer(@NonNull Long customerId);
+    void deactivateCustomer(@NonNull Long customerId);
+
+    CustomerStatusDto getCustomerStatus(Long customerId);
 }

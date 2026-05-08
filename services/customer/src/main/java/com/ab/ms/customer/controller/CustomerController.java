@@ -1,11 +1,10 @@
 package com.ab.ms.customer.controller;
 
 import com.ab.ms.customer.dto.*;
-import com.ab.ms.customer.exceptions.ResourceNotFoundException;
+import com.ab.ms.customer.entity.Customer;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import com.ab.ms.customer.service.ICustomerService;
 
 import java.util.List;
-import java.util.Map;
 
 @Tag(
         name = "CRUD REST APIs for Customers",
@@ -54,7 +52,10 @@ public class CustomerController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
-                    description = "Customer registered successfully"
+                    description = "Customer registered successfully",
+                    content = @Content(
+                            schema = @Schema(implementation = CustomerResponse.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -72,9 +73,9 @@ public class CustomerController {
             )
     })
     @PostMapping("/customers")
-    public ResponseEntity<ResponseDto> registerCustomer(@Valid @RequestBody CustomerDto customerDto) {
-        iCustomerService.registerCustomer(customerDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Customer registered successfully."));
+    public ResponseEntity<CustomerResponse> registerCustomer(@Valid @RequestBody CreateCustomerRequest customerDto) {
+        CustomerResponse customerResponse = iCustomerService.registerCustomer(customerDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerResponse);
     }
 
     @Operation(
@@ -82,7 +83,7 @@ public class CustomerController {
             description = "REST API to get a customer by ID"
     )
     @GetMapping("/customers/{customerId}")
-    public ResponseEntity<CustomerDto> getCustomerById(
+    public ResponseEntity<CustomerResponse> getCustomerById(
             @PathVariable
             @Min(value = 1, message = "Customer ID must be greater than 0")
             long customerId) {
@@ -94,12 +95,7 @@ public class CustomerController {
             @PathVariable
             @Min(value = 1, message = "Customer ID must be greater than 0")
             long customerId) {
-        try {
-            CustomerDto customer = iCustomerService.getCustomerById(customerId);
-            return ResponseEntity.ok(new CustomerStatusDto(true, customer.isActive()));
-        } catch (ResourceNotFoundException ignored) {
-            return ResponseEntity.ok(new CustomerStatusDto(false, false));
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(iCustomerService.getCustomerStatus(customerId));
     }
 
     @Operation(
@@ -107,7 +103,7 @@ public class CustomerController {
             description = "REST API to get a customer by mobile number"
     )
     @GetMapping("/customers/search")
-    public ResponseEntity<CustomerDto> getCustomerByMobileNumber(
+    public ResponseEntity<CustomerResponse> getCustomerByMobileNumber(
             @RequestParam
             @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
             String mobileNumber) {
@@ -119,7 +115,7 @@ public class CustomerController {
             description = "REST API to get all customers"
     )
     @GetMapping("/customers")
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
         return ResponseEntity.status(HttpStatus.OK).body(iCustomerService.getAllCustomers());
     }
 
@@ -128,13 +124,12 @@ public class CustomerController {
             description = "REST API to update customer contact info"
     )
     @PatchMapping("/customers/{customerId}/contact-info")
-    public ResponseEntity<ResponseDto> updateContactInfo(
+    public ResponseEntity<CustomerResponse> updateContactInfo(
             @PathVariable
             @Min(value = 1, message = "Customer ID must be greater than 0")
             long customerId,
             @Valid @RequestBody ContactInfoUpdateDto contactInfoUpdateDto) {
-        iCustomerService.updateContactInfo(customerId, contactInfoUpdateDto);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Contact information updated successfully."));
+        return ResponseEntity.status(HttpStatus.OK).body(iCustomerService.updateContactInfo(customerId, contactInfoUpdateDto));
     }
 
     @Operation(
@@ -157,6 +152,7 @@ public class CustomerController {
     }
 
     public ResponseEntity<String> getContactDetailsRateLimiterFallback(RequestNotPermitted throwable) {
+        logger.info("Rate limit exceeded for API: getContactDetailsRateLimiterFallback");
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Too many requests. Try again later.");
     }
 }
