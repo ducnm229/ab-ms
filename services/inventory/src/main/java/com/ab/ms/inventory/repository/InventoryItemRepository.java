@@ -13,6 +13,11 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
 
     Optional<InventoryItem> findByProductId(String productId);
 
+    /* Notes:
+     * Using Pessimistic Locking because for scenarios like flash sales,
+     * contention is potentially significant and waiting is better than many
+     * failed retries resulting wasted server/DB work
+     */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT i FROM InventoryItem i WHERE i.productId = :productId")
     Optional<InventoryItem> findByProductIdForUpdate(@Param("productId") String productId);
