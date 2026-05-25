@@ -9,11 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ab.ms</groupId>
-	<artifactId>inventory</artifactId>
+	<artifactId>product</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>inventory</name>
-	<description>Microservices for ABMS Inventory service</description>
+	<name>product</name>
+	<description>Microservices for ABMS Product service</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -58,6 +58,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -114,11 +118,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -168,7 +167,7 @@
 					</to>
 					<container>
 						<ports>
-							<port>9080</port>
+							<port>9085</port>
 						</ports>
 					</container>
 				</configuration>

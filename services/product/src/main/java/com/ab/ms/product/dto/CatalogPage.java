@@ -1,11 +1,9 @@
-package com.ab.ms.inventory.dto;
-
-import com.ab.ms.inventory.domain.Product;
+package com.ab.ms.product.dto;
 
 import java.util.List;
 
 public record CatalogPage(
-        List<Product> products,
+        List<ProductResponse> products,
         int page,
         int size,
         long totalElements,

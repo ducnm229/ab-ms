@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class InventoryItem extends BaseEntity {
     @Column(name = "product_id", nullable = false, unique = true, length = 64)
     private String productId;
 
+    @Min(0)
     @Column(name = "available_quantity", nullable = false)
     private Integer availableQuantity;
 

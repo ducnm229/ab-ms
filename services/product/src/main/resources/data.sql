@@ -1,0 +1,11 @@
+SELECT 1;
+-- INSERT INTO products (id, name, category, price, created_at, updated_at)
+-- VALUES ('K100', 'Electric Kettle', 'Kitchen', 30.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('K200', 'Toaster', 'Kitchen', 25.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('K300', 'Blender', 'Kitchen', 45.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('K400', 'Microwave Oven', 'Kitchen', 120.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('K500', 'Coffee Maker', 'Kitchen', 80.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('E100', 'Wireless Mouse', 'Electronics', 20.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('E200', 'Mechanical Keyboard', 'Electronics', 75.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('E300', '27-inch Monitor', 'Electronics', 220.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+--        ('E400', 'Noise Cancelling Headphones', 'Electronics', 150.00, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

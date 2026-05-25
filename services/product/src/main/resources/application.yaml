@@ -1,0 +1,83 @@
+server:
+  port: 9085
+spring:
+  application:
+    name: product
+  profiles:
+    active: prod
+  datasource:
+#    url: jdbc:h2:mem:product_db
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: ''
+    url: jdbc:postgresql://localhost:5432/ab-ms
+    username: user
+    password: a
+    driver-class-name: org.postgresql.Driver
+#  h2:
+#    console:
+#      enabled: true
+  sql:
+    init:
+      mode: always
+  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+eureka:
+  instance:
+    preferIpAddress: true # registering with IP instead of domain name
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: product
+    description: "ABMS Product Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com.ab.ms.product: DEBUG
+    org.springframework.data.redis: INFO
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
